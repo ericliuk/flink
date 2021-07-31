@@ -242,6 +242,7 @@ public class CliFrontend {
 
         LOG.debug("Effective executor configuration: {}", effectiveConfiguration);
 
+        //执行提交操作
         try (PackagedProgram program = getPackagedProgram(programOptions, effectiveConfiguration)) {
             executeProgram(effectiveConfiguration, program);
         }
@@ -806,7 +807,7 @@ public class CliFrontend {
     // --------------------------------------------------------------------------------------------
     //  Interaction with programs and JobManager
     // --------------------------------------------------------------------------------------------
-
+    //执行
     protected void executeProgram(final Configuration configuration, final PackagedProgram program)
             throws ProgramInvocationException {
         ClientUtils.executeProgram(
@@ -1047,6 +1048,7 @@ public class CliFrontend {
         // remove action from parameters
         final String[] params = Arrays.copyOfRange(args, 1, args.length);
 
+        //根据参数，执行run，cancel，list等操作
         try {
             // do action
             switch (action) {
@@ -1109,17 +1111,21 @@ public class CliFrontend {
         }
     }
 
+    //提交程序的入口
     /** Submits the job based on the arguments. */
     public static void main(final String[] args) {
         EnvironmentInformation.logEnvironmentInfo(LOG, "Command Line Client", args);
 
+        //config目录配置
         // 1. find the configuration directory
         final String configurationDirectory = getConfigurationDirectoryFromEnv();
 
+        //global 配置
         // 2. load the global configuration
         final Configuration configuration =
                 GlobalConfiguration.loadConfiguration(configurationDirectory);
 
+        //自定义配置
         // 3. load the custom command lines
         final List<CustomCommandLine> customCommandLines =
                 loadCustomCommandLines(configuration, configurationDirectory);
@@ -1128,6 +1134,7 @@ public class CliFrontend {
             final CliFrontend cli = new CliFrontend(configuration, customCommandLines);
 
             SecurityUtils.install(new SecurityConfiguration(cli.configuration));
+            //解析传入参数，并执行命令
             int retCode =
                     SecurityUtils.getInstalledContext().runSecured(() -> cli.parseAndRun(args));
             System.exit(retCode);

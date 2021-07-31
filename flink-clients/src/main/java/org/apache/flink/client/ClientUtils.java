@@ -87,7 +87,9 @@ public enum ClientUtils {
             boolean suppressSysout)
             throws ProgramInvocationException {
         checkNotNull(executorServiceLoader);
+        //获取加载器
         final ClassLoader userCodeClassLoader = program.getUserCodeClassLoader();
+        //缓存加载器
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(userCodeClassLoader);
